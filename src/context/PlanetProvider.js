@@ -6,21 +6,54 @@ import getAPI from '../services/getAPI';
 export default function PlanetProvider({ children }) {
   const [planets, setPlanets] = useState([]);
   const [nameFilter, setNameFilter] = useState('');
+  const [columnFilter, setColumnFilter] = useState({
+    column: 'population',
+    comparison: 'maior que',
+    value: '0',
+  });
+  const [filteredByName, setFilteredByName] = useState('');
+  const [execPlanets, setExecPlanets] = useState(planets);
+
+  useEffect(() => { getAPI(setPlanets); }, []);
+
+  useEffect(() => { setExecPlanets(planets); }, [planets]);
 
   useEffect(() => {
-    getAPI(setPlanets);
-  }, []);
+    setFilteredByName(planets.filter((element) => element.name.includes(nameFilter)));
+  }, [nameFilter, planets]);
 
-  const filter = () => {
-    const filteredByName = planets.filter((element) => element.name.includes(nameFilter));
-    return filteredByName;
+  const filterColumn = () => {
+    let filterPlanets = [];
+    const { column, comparison, value } = columnFilter;
+    switch (comparison) {
+    case 'maior que':
+      filterPlanets = filteredByName
+        .filter((element) => Number(element[column]) > Number(value));
+      break;
+    case 'menor que':
+      filterPlanets = filteredByName
+        .filter((element) => Number(element[column]) < Number(value));
+      break;
+    case 'igual a':
+      filterPlanets = filteredByName
+        .filter((element) => Number(element[column]) === Number(value));
+      break;
+    default:
+      filterPlanets = filteredByName;
+    }
+    console.log(filterPlanets);
+    return setExecPlanets(filterPlanets);
   };
 
   const context = {
     planets,
     nameFilter,
     setNameFilter,
-    filter,
+    columnFilter,
+    setColumnFilter,
+    filterColumn,
+    execPlanets,
+    filteredByName,
   };
 
   return (
