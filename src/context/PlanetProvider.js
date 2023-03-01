@@ -5,17 +5,26 @@ import getAPI from '../services/getAPI';
 
 export default function PlanetProvider({ children }) {
   const [planets, setPlanets] = useState([]);
+  const [nameFilter, setNameFilter] = useState('');
 
   useEffect(() => {
     getAPI(setPlanets);
   }, []);
 
-  const finalPlanets = {
+  const filter = () => {
+    const filteredByName = planets.filter((element) => element.name.includes(nameFilter));
+    return filteredByName;
+  };
+
+  const context = {
     planets,
+    nameFilter,
+    setNameFilter,
+    filter,
   };
 
   return (
-    <PlanetContext.Provider value={ finalPlanets }>
+    <PlanetContext.Provider value={ context }>
       { children }
     </PlanetContext.Provider>
   );
