@@ -9,6 +9,8 @@ export default function Filters() {
     columnFilter,
     setColumnFilter,
     filterColumn,
+    options,
+    setOptions,
   } = useContext(PlanetContext);
 
   const handleChange = ({ target }) => {
@@ -18,6 +20,13 @@ export default function Filters() {
 
   const filterHandleChange = ({ target: { name, value } }) => {
     setColumnFilter({ ...columnFilter, [name]: value });
+  };
+
+  const handleClick = () => {
+    filterColumn();
+    const updatedOptions = options
+      .filter((option) => option.value !== columnFilter.column);
+    setOptions(updatedOptions);
   };
 
   return (
@@ -37,11 +46,10 @@ export default function Filters() {
           onChange={ filterHandleChange }
           value={ columnFilter.column }
         >
-          <option value="population">population</option>
-          <option value="orbital_period">orbital_period</option>
-          <option value="diameter">diameter</option>
-          <option value="rotation_period">rotation_period</option>
-          <option value="surface_water">surface_water</option>
+          { options.map((el) => (
+            <option key={ el.value } value={ el.value }>
+              { el.label }
+            </option>))}
         </select>
         <select
           name="comparison"
@@ -49,9 +57,22 @@ export default function Filters() {
           onChange={ filterHandleChange }
           value={ columnFilter.comparison }
         >
-          <option value="maior que">maior que</option>
-          <option value="menor que">menor que</option>
-          <option value="igual a">igual a</option>
+          <option
+            value="maior que"
+          >
+            maior que
+          </option>
+          <option
+            value="menor que"
+          >
+            menor que
+          </option>
+          <option
+            value="igual a"
+          >
+            igual a
+          </option>
+
         </select>
         <input
           name="value"
@@ -63,7 +84,7 @@ export default function Filters() {
         <button
           type="button"
           data-testid="button-filter"
-          onClick={ () => { filterColumn(); } }
+          onClick={ handleClick }
         >
           Filtrar
         </button>

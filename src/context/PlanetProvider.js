@@ -11,15 +11,24 @@ export default function PlanetProvider({ children }) {
     comparison: 'maior que',
     value: '0',
   });
-  const [filteredByName, setFilteredByName] = useState('');
   const [execPlanets, setExecPlanets] = useState(planets);
+  const [defaultDisabled, setDefaultDisabled] = useState('');
+  const [options, setOptions] = useState([
+    { value: 'population', label: 'population' },
+    { value: 'orbital_period', label: 'orbital_period' },
+    { value: 'diameter', label: 'diameter' },
+    { value: 'rotation_period', label: 'rotation_period' },
+    { value: 'surface_water', label: 'surface_water' },
+  ]);
 
   useEffect(() => { getAPI(setPlanets); }, []);
 
   useEffect(() => { setExecPlanets(planets); }, [planets]);
 
   useEffect(() => {
-    setFilteredByName(planets.filter((element) => element.name.includes(nameFilter)));
+    const data = (planets.filter((element) => element
+      .name.toLowerCase().includes(nameFilter)));
+    setExecPlanets(data);
   }, [nameFilter, planets]);
 
   const filterColumn = () => {
@@ -27,21 +36,20 @@ export default function PlanetProvider({ children }) {
     const { column, comparison, value } = columnFilter;
     switch (comparison) {
     case 'maior que':
-      filterPlanets = filteredByName
+      filterPlanets = execPlanets
         .filter((element) => Number(element[column]) > Number(value));
       break;
     case 'menor que':
-      filterPlanets = filteredByName
+      filterPlanets = execPlanets
         .filter((element) => Number(element[column]) < Number(value));
       break;
     case 'igual a':
-      filterPlanets = filteredByName
+      filterPlanets = execPlanets
         .filter((element) => Number(element[column]) === Number(value));
       break;
     default:
-      filterPlanets = filteredByName;
+      filterPlanets = execPlanets;
     }
-    console.log(filterPlanets);
     return setExecPlanets(filterPlanets);
   };
 
@@ -53,7 +61,10 @@ export default function PlanetProvider({ children }) {
     setColumnFilter,
     filterColumn,
     execPlanets,
-    filteredByName,
+    defaultDisabled,
+    options,
+    setOptions,
+    setDefaultDisabled,
   };
 
   return (
