@@ -5,6 +5,11 @@ import getAPI from '../services/getAPI';
 
 export default function PlanetProvider({ children }) {
   const [planets, setPlanets] = useState([]);
+  const [filterCheck, setFilterCheck] = useState({
+    column: 'population',
+    comparison: 'maior que',
+    value: 0,
+  });
   const [nameFilter, setNameFilter] = useState('');
   const [columnFilter, setColumnFilter] = useState({
     column: 'population',
@@ -12,14 +17,16 @@ export default function PlanetProvider({ children }) {
     value: '0',
   });
   const [execPlanets, setExecPlanets] = useState(planets);
-  const [defaultDisabled, setDefaultDisabled] = useState('');
   const [options, setOptions] = useState([
-    { value: 'population', label: 'population' },
     { value: 'orbital_period', label: 'orbital_period' },
+    { value: 'population', label: 'population' },
     { value: 'diameter', label: 'diameter' },
     { value: 'rotation_period', label: 'rotation_period' },
     { value: 'surface_water', label: 'surface_water' },
   ]);
+  const [sortAux, setSortAux] = useState({
+    order: { column: 'population', sort: 'ASC' },
+  });
 
   useEffect(() => { getAPI(setPlanets); }, []);
 
@@ -53,6 +60,41 @@ export default function PlanetProvider({ children }) {
     return setExecPlanets(filterPlanets);
   };
 
+  const removeAllFilter = () => {
+    setExecPlanets(planets);
+  };
+
+  const sortHandleClick = () => {
+    const { order: { column, sort } } = sortAux;
+    let sortedPlanets = [];
+    if (column === 'population') {
+      const definedPlanets = planets
+        .filter((element) => element.population !== 'unknown');
+      const unknownPlanets = planets
+        .filter((element) => element.population === 'unknown');
+      const sortDefinedPlanets = definedPlanets.sort((planetA, planetB) => {
+        switch (sort) {
+        case 'ASC':
+          return (planetA[column]) - (planetB[column]);
+        default:
+          return (planetB[column]) - (planetA[column]);
+        }
+      });
+      sortedPlanets = ([...sortDefinedPlanets, ...unknownPlanets]);
+    } else {
+      const sortDefinedPlanets = planets.sort((planetA, planetB) => {
+        switch (sort) {
+        case 'ASC':
+          return (planetA[column]) - (planetB[column]);
+        default:
+          return (planetB[column]) - (planetA[column]);
+        }
+      });
+      sortedPlanets = sortDefinedPlanets;
+    }
+    setExecPlanets(sortedPlanets);
+  };
+
   const context = {
     planets,
     nameFilter,
@@ -61,10 +103,14 @@ export default function PlanetProvider({ children }) {
     setColumnFilter,
     filterColumn,
     execPlanets,
-    defaultDisabled,
     options,
     setOptions,
-    setDefaultDisabled,
+    filterCheck,
+    setFilterCheck,
+    removeAllFilter,
+    sortAux,
+    setSortAux,
+    sortHandleClick,
   };
 
   return (
