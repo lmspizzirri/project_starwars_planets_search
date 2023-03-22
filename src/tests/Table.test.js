@@ -1,17 +1,16 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from '../App';
-import testAPI from '../mocks/testAPI';
 import { act } from 'react-dom/test-utils';
+import mockFetch from '../../cypress/mocks/fetch';
+import testData from '../../cypress/mocks/testData';
 
 describe('Testes componente Table',() => {
   beforeEach(() => {
-    jest.spyOn(global, 'fetch').mockImplementation(() => Promise.resolve({
-      json: () => Promise.resolve(testAPI),
-    }));
+    global.fetch=jest.fn(mockFetch);
 });
 
-  const apiPlanets =  testAPI.results.map((el) => el.name);
+  const apiPlanets =  testData.results.map((el) => el.name);
 
   afterEach(() => jest.restoreAllMocks());
 

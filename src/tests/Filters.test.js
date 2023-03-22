@@ -1,16 +1,14 @@
 import React from 'react';
-import { getByPlaceholderText, getByText, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import App from '../App';
-import testAPI from '../mocks/testAPI';
 import { act } from 'react-dom/test-utils';
 import userEvent from '@testing-library/user-event';
-import { toBeInTheDOM } from '@testing-library/jest-dom/dist/matchers';
+import mockFetch from '../../cypress/mocks/fetch';
+
 
 describe('Testes componente Table',() => {
   beforeEach(() => {
-    jest.spyOn(global, 'fetch').mockImplementation(() => Promise.resolve({
-    json: () => Promise.resolve(testAPI),
-    }));
+    global.fetch=jest.fn(mockFetch);
     
   });
 
