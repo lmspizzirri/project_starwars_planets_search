@@ -117,8 +117,7 @@ export default function Filters() {
           Remove All Filters
         </button>
         {/* <div>
-          { filterCheck.length > 0
-          && filterCheck.map((filter, index) => (
+          { filterCheck.map((filter, index) => (
             <p key={ index } data-testid="filter">
               {filter.column}
               {filter.comparison}
